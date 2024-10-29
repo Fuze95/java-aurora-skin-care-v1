@@ -111,7 +111,7 @@ public class ClinicSystem {
             System.out.println("6. View All Patients");
             System.out.println("7. Update Appointment");
             System.out.println("8. Complete Appointment and Generate Invoice");
-            System.out.println("9. View Doctors");  // New option
+            System.out.println("9. View Doctors");
             if (currentUser.getRole().equals("ADMIN")) {
                 System.out.println("10. Manage Users");
             }

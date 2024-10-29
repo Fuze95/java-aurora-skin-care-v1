@@ -1,4 +1,5 @@
 package com.auroraskincare;
+
 import java.util.Scanner;
 
 public class Main {
