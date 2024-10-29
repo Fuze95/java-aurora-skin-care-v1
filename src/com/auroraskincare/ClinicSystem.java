@@ -180,6 +180,7 @@ public class ClinicSystem {
             return;
         }
 
+        // Select patient
         System.out.println("Select patient by NIC:");
         String nic = scanner.nextLine();
         Patient patient = patients.stream()
@@ -225,7 +226,7 @@ public class ClinicSystem {
             return;
         }
 
-
+        // Select doctor
         System.out.println("\nAvailable doctors:");
         for (Doctor doctor : doctors) {
             System.out.println(doctor.getId() + ". " + doctor.getName());
@@ -244,6 +245,7 @@ public class ClinicSystem {
             return;
         }
 
+        // Select treatment
         System.out.println("\nAvailable treatments:");
         int i = 1;
         for (Map.Entry<String, Double> treatment : TREATMENT_PRICES.entrySet()) {
@@ -256,12 +258,13 @@ public class ClinicSystem {
         String treatmentType = new ArrayList<>(TREATMENT_PRICES.keySet()).get(treatmentChoice - 1);
         double treatmentPrice = TREATMENT_PRICES.get(treatmentType);
 
+        // Collect registration fee
         System.out.printf("\nRegistration fee: LKR %.2f%n", REGISTRATION_FEE);
         System.out.print("Confirm payment (yes/no): ");
         String confirm = scanner.nextLine();
 
         if (confirm.equalsIgnoreCase("yes")) {
-            Appointment appointment = new Appointment(date, timeSlot, patient, selectedDoctor, treatmentType, treatmentPrice);
+            Appointment appointment = new Appointment(date, time, patient, selectedDoctor, treatmentType, treatmentPrice);
             appointments.add(appointment);
             System.out.println("Appointment booked successfully! Appointment ID: " + appointment.getAppointmentId());
         } else {
