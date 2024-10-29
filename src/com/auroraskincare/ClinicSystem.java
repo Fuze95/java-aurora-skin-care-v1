@@ -344,125 +344,170 @@ public class ClinicSystem {
         int appointmentId = scanner.nextInt();
         scanner.nextLine();
 
-        Appointment appointment = appointments.stream()
+        boolean continueUpdating = true;
+        while (continueUpdating) {
+            // Get current appointment state at the start of each loop
+            Appointment currentAppointment = appointments.stream()
                 .filter(a -> a.getAppointmentId() == appointmentId)
                 .findFirst()
                 .orElse(null);
 
-        if (appointment == null) {
-            System.out.println("Appointment not found!");
-            return;
-        }
-
-        if (appointment.isCompleted()) {
-            System.out.println("Cannot update completed appointment!");
-            return;
-        }
-
-        System.out.println("\nCurrent Appointment Details:");
-        System.out.println("1. Doctor: " + appointment.getDoctor().getName());
-        System.out.println("2. Day: " + appointment.getDate());
-        System.out.println("3. Time: " + appointment.getTime());
-        System.out.println("4. Back to Main Menu");
-        System.out.print("Select what to update (1-4): ");
-        
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-
-        switch (choice) {
-            case 1:
-                // Update doctor
-                System.out.println("\nAvailable doctors:");
-                for (Doctor doctor : doctors) {
-                    System.out.println(doctor.getId() + ". " + doctor.getName());
-                }
-                System.out.print("Select new doctor (1-2): ");
-                int doctorId = scanner.nextInt();
-                scanner.nextLine();
-
-                Doctor newDoctor = doctors.stream()
-                        .filter(d -> d.getId() == doctorId)
-                        .findFirst()
-                        .orElse(null);
-
-                if (newDoctor != null) {
-                    appointment = new Appointment(
-                        appointment.getDate(),
-                        appointment.getTime(),
-                        appointment.getPatient(),
-                        newDoctor,
-                        appointment.getTreatmentType(),
-                        appointment.getTreatmentPrice()
-                    );
-                    System.out.println("Doctor updated successfully!");
-                } else {
-                    System.out.println("Invalid doctor selection!");
-                }
-                break;
-
-            case 2:
-                // Update day
-                System.out.println("\nAvailable days:");
-                System.out.println("1. Monday (10:00 - 13:00)");
-                System.out.println("2. Wednesday (14:00 - 17:00)");
-                System.out.println("3. Friday (16:00 - 20:00)");
-                System.out.println("4. Saturday (09:00 - 13:00)");
-                System.out.print("Select new day (1-4): ");
-                int dayChoice = scanner.nextInt();
-                scanner.nextLine();
-
-                String newDate;
-                switch (dayChoice) {
-                    case 1: newDate = "Monday"; break;
-                    case 2: newDate = "Wednesday"; break;
-                    case 3: newDate = "Friday"; break;
-                    case 4: newDate = "Saturday"; break;
-                    default:
-                        System.out.println("Invalid day selection!");
-                        return;
-                }
-
-                appointment = new Appointment(
-                    newDate,
-                    appointment.getTime(),
-                    appointment.getPatient(),
-                    appointment.getDoctor(),
-                    appointment.getTreatmentType(),
-                    appointment.getTreatmentPrice()
-                );
-                System.out.println("Day updated successfully!");
-                break;
-
-            case 3:
-                // Update time
-                System.out.println("\nEnter new appointment time (HH:mm, must be in 15-minute intervals)");
-                System.out.println("Available time range for " + appointment.getDate() + ": " + 
-                                  TIME_RANGES.get(appointment.getDate())[0] + " - " + 
-                                  TIME_RANGES.get(appointment.getDate())[1]);
-                System.out.print("Enter new time: ");
-                String newTime = scanner.nextLine();
-
-                if (isTimeInRange(appointment.getDate(), newTime)) {
-                    appointment = new Appointment(
-                        appointment.getDate(),
-                        newTime,
-                        appointment.getPatient(),
-                        appointment.getDoctor(),
-                        appointment.getTreatmentType(),
-                        appointment.getTreatmentPrice()
-                    );
-                    System.out.println("Time updated successfully!");
-                } else {
-                    System.out.println("Invalid time! Time must be within range and in 15-minute intervals.");
-                }
-                break;
-
-            case 4:
+            if (currentAppointment == null) {
+                System.out.println("Appointment not found!");
                 return;
+            }
 
-            default:
-                System.out.println("Invalid choice!");
-                break;
+            if (currentAppointment.isCompleted()) {
+                System.out.println("Cannot update completed appointment!");
+                return;
+            }
+
+            // Show current appointment details
+            System.out.println("\nCurrent Appointment Details:");
+            System.out.println("Doctor: " + currentAppointment.getDoctor().getName());
+            System.out.println("Day: " + currentAppointment.getDate());
+            System.out.println("Time: " + currentAppointment.getTime());
+            System.out.println("Treatment: " + currentAppointment.getTreatmentType() + 
+                             " (LKR " + currentAppointment.getTreatmentPrice() + ")");
+            
+            System.out.println("\nWhat would you like to update?");
+            System.out.println("1. Doctor");
+            System.out.println("2. Schedule (Day and Time)");
+            System.out.println("3. Treatment");
+            System.out.println("4. Return to Main Menu");
+            System.out.print("Select option (1-4): ");
+            
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    // Update doctor
+                    System.out.println("\nAvailable doctors:");
+                    for (Doctor doctor : doctors) {
+                        System.out.println(doctor.getId() + ". " + doctor.getName());
+                    }
+                    System.out.print("Select new doctor (1-2): ");
+                    int doctorId = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Doctor newDoctor = doctors.stream()
+                            .filter(d -> d.getId() == doctorId)
+                            .findFirst()
+                            .orElse(null);
+
+                    if (newDoctor != null) {
+                        Appointment updatedAppointment = new Appointment(
+                            currentAppointment.getDate(),
+                            currentAppointment.getTime(),
+                            currentAppointment.getPatient(),
+                            newDoctor,
+                            currentAppointment.getTreatmentType(),
+                            currentAppointment.getTreatmentPrice()
+                        );
+                        appointments.remove(currentAppointment);
+                        appointments.add(updatedAppointment);
+                        System.out.println("\nDoctor updated successfully!");
+                        System.out.println("=================================");
+                    } else {
+                        System.out.println("\nInvalid doctor selection!");
+                        System.out.println("=================================");
+                    }
+                    break;
+
+                case 2:
+                    // Update schedule (day and time together)
+                    System.out.println("\nAvailable days and time slots:");
+                    System.out.println("1. Monday (10:00 - 13:00)");
+                    System.out.println("2. Wednesday (14:00 - 17:00)");
+                    System.out.println("3. Friday (16:00 - 20:00)");
+                    System.out.println("4. Saturday (09:00 - 13:00)");
+                    System.out.print("Select new day (1-4): ");
+                    int dayChoice = scanner.nextInt();
+                    scanner.nextLine();
+
+                    String newDate;
+                    switch (dayChoice) {
+                        case 1: newDate = "Monday"; break;
+                        case 2: newDate = "Wednesday"; break;
+                        case 3: newDate = "Friday"; break;
+                        case 4: newDate = "Saturday"; break;
+                        default:
+                            System.out.println("\nInvalid day selection!");
+                            System.out.println("=================================");
+                            continue;
+                    }
+
+                    System.out.println("\nEnter new appointment time (HH:mm, must be in 15-minute intervals)");
+                    System.out.println("Available time range for " + newDate + ": " + 
+                                      TIME_RANGES.get(newDate)[0] + " - " + 
+                                      TIME_RANGES.get(newDate)[1]);
+                    System.out.print("Enter new time: ");
+                    String newTime = scanner.nextLine();
+
+                    if (isTimeInRange(newDate, newTime)) {
+                        Appointment updatedAppointment = new Appointment(
+                            newDate,
+                            newTime,
+                            currentAppointment.getPatient(),
+                            currentAppointment.getDoctor(),
+                            currentAppointment.getTreatmentType(),
+                            currentAppointment.getTreatmentPrice()
+                        );
+                        appointments.remove(currentAppointment);
+                        appointments.add(updatedAppointment);
+                        System.out.println("\nSchedule updated successfully!");
+                        System.out.println("=================================");
+                    } else {
+                        System.out.println("\nInvalid time! Time must be within range and in 15-minute intervals.");
+                        System.out.println("=================================");
+                    }
+                    break;
+
+                case 3:
+                    // Update treatment
+                    System.out.println("\nAvailable treatments:");
+                    int i = 1;
+                    for (Map.Entry<String, Double> treatment : TREATMENT_PRICES.entrySet()) {
+                        System.out.printf("%d. %s (LKR %.2f)%n", i++, treatment.getKey(), treatment.getValue());
+                    }
+                    System.out.print("Select new treatment (1-4): ");
+                    int treatmentChoice = scanner.nextInt();
+                    scanner.nextLine();
+
+                    if (treatmentChoice >= 1 && treatmentChoice <= TREATMENT_PRICES.size()) {
+                        String newTreatmentType = new ArrayList<>(TREATMENT_PRICES.keySet()).get(treatmentChoice - 1);
+                        double newTreatmentPrice = TREATMENT_PRICES.get(newTreatmentType);
+                        
+                        Appointment updatedAppointment = new Appointment(
+                            currentAppointment.getDate(),
+                            currentAppointment.getTime(),
+                            currentAppointment.getPatient(),
+                            currentAppointment.getDoctor(),
+                            newTreatmentType,
+                            newTreatmentPrice
+                        );
+                        appointments.remove(currentAppointment);
+                        appointments.add(updatedAppointment);
+                        System.out.println("\nTreatment updated successfully!");
+                        System.out.println("=================================");
+                    } else {
+                        System.out.println("\nInvalid treatment selection!");
+                        System.out.println("=================================");
+                    }
+                    break;
+
+                case 4:
+                    continueUpdating = false;
+                    System.out.println("\nReturning to main menu...");
+                    System.out.println("=================================");
+                    break;
+
+                default:
+                    System.out.println("\nInvalid choice!");
+                    System.out.println("=================================");
+                    break;
+            }
         }
     }
 
