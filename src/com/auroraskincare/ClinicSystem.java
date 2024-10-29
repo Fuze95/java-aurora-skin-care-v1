@@ -11,7 +11,6 @@ public class ClinicSystem {
     private List<User> users;
     private User currentUser;
     
-    private static final double TAX_RATE = 0.025;
     private static final double REGISTRATION_FEE = 500.00;
     private static final Map<String, Double> TREATMENT_PRICES = new HashMap<>();
     
@@ -601,7 +600,7 @@ public class ClinicSystem {
         System.out.println("An error occurred while generating the invoice");
     }
 }
-    
+
     private void manageUsers() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n=== Manage Users ===");
