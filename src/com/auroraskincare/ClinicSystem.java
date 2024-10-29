@@ -111,10 +111,11 @@ public class ClinicSystem {
             System.out.println("6. View All Patients");
             System.out.println("7. Update Appointment");
             System.out.println("8. Complete Appointment and Generate Invoice");
+            System.out.println("9. View Doctors");  // New option
             if (currentUser.getRole().equals("ADMIN")) {
-                System.out.println("9. Manage Users");
+                System.out.println("10. Manage Users");
             }
-            System.out.println("10. Logout");
+            System.out.println("11. Logout");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
@@ -129,14 +130,15 @@ public class ClinicSystem {
                 case 6: viewAllPatients(); break;
                 case 7: updateAppointment(); break;
                 case 8: generateInvoice(); break;
-                case 9: 
+                case 9: viewDoctors(); break;
+                case 10: 
                     if (currentUser.getRole().equals("ADMIN")) {
                         manageUsers();
                     } else {
                         System.out.println("Invalid choice!");
                     }
                     break;
-                case 10:
+                case 11:
                     System.out.println("Logging out...");
                     return;
                 default:
@@ -545,6 +547,20 @@ public class ClinicSystem {
             System.out.println("Name: " + patient.getName());
             System.out.println("Email: " + patient.getEmail());
             System.out.println("Phone: " + patient.getPhoneNumber());
+        }
+    }
+
+    private void viewDoctors() {
+        System.out.println("\n=== Doctor Information ===");
+        System.out.println("------------------------------------------");
+        
+        for (Doctor doctor : doctors) {
+            System.out.println("Doctor ID: " + doctor.getId());
+            System.out.println("Name: " + doctor.getName());
+            System.out.println("Specialization: " + doctor.getSpecialization());
+            System.out.println("Contact Number: " + doctor.getPhoneNumber());
+            System.out.println("Email: " + doctor.getEmail());
+            System.out.println("------------------------------------------");
         }
     }
 
