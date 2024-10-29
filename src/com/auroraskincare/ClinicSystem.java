@@ -565,16 +565,19 @@ public class ClinicSystem {
     }
 
     private void generateInvoice() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("\n=== Generate Invoice ===");
-        
-        System.out.print("Enter appointment ID: ");
-        int appointmentId = scanner.nextInt();
-        scanner.nextLine();
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("\n=== Generate Invoice ===");
+    
+    System.out.print("Enter appointment ID: ");
+    int appointmentId = scanner.nextInt();
+    scanner.nextLine();
+    
+    try {
         Appointment appointment = appointments.stream()
                 .filter(a -> a.getAppointmentId() == appointmentId)
                 .findFirst()
                 .orElse(null);
+        
         if (appointment == null) {
             System.out.println("Appointment not found!");
             return;
@@ -583,51 +586,22 @@ public class ClinicSystem {
             System.out.println("Invoice has already been generated for this appointment!");
             return;
         }
-
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         
-        // Calculate total
-        double treatmentPrice = appointment.getTreatmentPrice();
-        double tax = Math.ceil((treatmentPrice + REGISTRATION_FEE) * TAX_RATE * 100) / 100;
-        double total = treatmentPrice + REGISTRATION_FEE + tax;
-
-        // Print invoice with improved formatting
-        System.out.println("\n══════════════════════════════════════════");
-        System.out.println("           AURORA SKIN CARE              ");
-        System.out.println("              INVOICE                    ");
-        System.out.println("══════════════════════════════════════════");
-        System.out.println("Generated Date & Time: " + now.format(dateTimeFormatter));
-        System.out.println("\nAppointment Details:");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        System.out.printf("Date: %-12s     Time: %s%n", 
-                appointment.getDate(), appointment.getTime());
-        System.out.printf("Appointment ID: %d%n", appointment.getAppointmentId());
-        System.out.println("\nPATIENT DETAILS:");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        System.out.printf("Name: %-30s%n", appointment.getPatient().getName());
-        System.out.printf("NIC:  %-30s%n", appointment.getPatient().getNic());
-        
-        System.out.println("\nTreatment Information:");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        System.out.printf("Doctor:    %-27s%n", appointment.getDoctor().getName());
-        System.out.printf("Treatment: %-27s%n", appointment.getTreatmentType());
-        
-        System.out.println("\nBILL DETAILS:");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        System.out.printf("Registration Fee:%31s%.2f%n", "LKR ", REGISTRATION_FEE);
-        System.out.printf("Treatment Price:%32s%.2f%n", "LKR ", treatmentPrice);
-        System.out.printf("Tax (2.5%%):%36s%.2f%n", "LKR ", tax);
-        System.out.println("──────────────────────────────────────────");
-        System.out.printf("Total Amount:%34s%.2f%n", "LKR ", total);
-        System.out.println("══════════════════════════════════════════");
-        System.out.println("     Thank you for choosing Aurora Skin Care!");
-        System.out.println("══════════════════════════════════════════");
+        InvoiceGenerator invoice = new InvoiceGenerator(appointment);
+        invoice.generateInvoice();
         
         appointment.setCompleted(true);
         System.out.println("\nInvoice generated successfully!");
+        
+    } catch (IllegalArgumentException e) {
+        System.out.println("Error: Invalid appointment data");
+    } catch (IllegalStateException e) {
+        System.out.println("Error: " + e.getMessage());
+    } catch (Exception e) {
+        System.out.println("An error occurred while generating the invoice");
     }
-
+}
+    
     private void manageUsers() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n=== Manage Users ===");
