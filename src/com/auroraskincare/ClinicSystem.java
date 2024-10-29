@@ -67,13 +67,13 @@ public class ClinicSystem {
 
 
     private void initializeDoctors() {
-        doctors.add(new Doctor(1, "Dr. John Smith", "Dermatologist", "0771234567", "john@clinic.com"));
-        doctors.add(new Doctor(2, "Dr. Sarah Johnson", "Dermatologist", "0777654321", "sarah@clinic.com"));
+        doctors.add(new Doctor(1, "Dr. Frodo Baggins", "Dermatologist", "0771234567", "frodo@asc.com"));
+        doctors.add(new Doctor(2, "Dr. Samwise Gamgee", "Dermatologist", "0777654321", "samwise@asc.com"));
     }
 
     private void initializeUsers() {
-        users.add(new User("Admin", "0771111111", "admin@clinic.com", "admin", "admin123", "ADMIN"));
-        users.add(new User("Receptionist", "0772222222", "reception@clinic.com", "staff", "staff123", "STAFF"));
+        users.add(new User("Admin", "0771111111", "admin@asc.com", "admin", "admin123", "ADMIN"));
+        users.add(new User("Receptionist", "0772222222", "reception@asc.com", "staff", "staff123", "STAFF"));
     }
 
     public boolean login() {
