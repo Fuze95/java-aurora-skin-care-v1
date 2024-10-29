@@ -22,7 +22,14 @@ public class Appointment {
         this.isCompleted = false;
     }
 
-    // Getters and Setters
+    // Add setters for updatable fields
+    public void setDate(String date) { this.date = date; }
+    public void setTime(String time) { this.time = time; }
+    public void setDoctor(Doctor doctor) { this.doctor = doctor; }
+    public void setTreatmentType(String treatmentType) { this.treatmentType = treatmentType; }
+    public void setTreatmentPrice(double treatmentPrice) { this.treatmentPrice = treatmentPrice; }
+
+    // Existing getters
     public int getAppointmentId() { return appointmentId; }
     public String getDate() { return date; }
     public String getTime() { return time; }

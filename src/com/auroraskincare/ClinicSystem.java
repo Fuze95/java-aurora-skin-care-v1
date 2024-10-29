@@ -344,31 +344,30 @@ public class ClinicSystem {
         int appointmentId = scanner.nextInt();
         scanner.nextLine();
 
-        boolean continueUpdating = true;
-        while (continueUpdating) {
-            // Get current appointment state at the start of each loop
-            Appointment currentAppointment = appointments.stream()
+        Appointment appointment = appointments.stream()
                 .filter(a -> a.getAppointmentId() == appointmentId)
                 .findFirst()
                 .orElse(null);
 
-            if (currentAppointment == null) {
-                System.out.println("Appointment not found!");
-                return;
-            }
+        if (appointment == null) {
+            System.out.println("Appointment not found!");
+            return;
+        }
 
-            if (currentAppointment.isCompleted()) {
-                System.out.println("Cannot update completed appointment!");
-                return;
-            }
+        if (appointment.isCompleted()) {
+            System.out.println("Cannot update completed appointment!");
+            return;
+        }
 
+        boolean continueUpdating = true;
+        while (continueUpdating) {
             // Show current appointment details
             System.out.println("\nCurrent Appointment Details:");
-            System.out.println("Doctor: " + currentAppointment.getDoctor().getName());
-            System.out.println("Day: " + currentAppointment.getDate());
-            System.out.println("Time: " + currentAppointment.getTime());
-            System.out.println("Treatment: " + currentAppointment.getTreatmentType() + 
-                             " (LKR " + currentAppointment.getTreatmentPrice() + ")");
+            System.out.println("Doctor: " + appointment.getDoctor().getName());
+            System.out.println("Day: " + appointment.getDate());
+            System.out.println("Time: " + appointment.getTime());
+            System.out.println("Treatment: " + appointment.getTreatmentType() + 
+                             " (LKR " + appointment.getTreatmentPrice() + ")");
             
             System.out.println("\nWhat would you like to update?");
             System.out.println("1. Doctor");
@@ -397,16 +396,7 @@ public class ClinicSystem {
                             .orElse(null);
 
                     if (newDoctor != null) {
-                        Appointment updatedAppointment = new Appointment(
-                            currentAppointment.getDate(),
-                            currentAppointment.getTime(),
-                            currentAppointment.getPatient(),
-                            newDoctor,
-                            currentAppointment.getTreatmentType(),
-                            currentAppointment.getTreatmentPrice()
-                        );
-                        appointments.remove(currentAppointment);
-                        appointments.add(updatedAppointment);
+                        appointment.setDoctor(newDoctor);
                         System.out.println("\nDoctor updated successfully!");
                         System.out.println("=================================");
                     } else {
@@ -446,16 +436,8 @@ public class ClinicSystem {
                     String newTime = scanner.nextLine();
 
                     if (isTimeInRange(newDate, newTime)) {
-                        Appointment updatedAppointment = new Appointment(
-                            newDate,
-                            newTime,
-                            currentAppointment.getPatient(),
-                            currentAppointment.getDoctor(),
-                            currentAppointment.getTreatmentType(),
-                            currentAppointment.getTreatmentPrice()
-                        );
-                        appointments.remove(currentAppointment);
-                        appointments.add(updatedAppointment);
+                        appointment.setDate(newDate);
+                        appointment.setTime(newTime);
                         System.out.println("\nSchedule updated successfully!");
                         System.out.println("=================================");
                     } else {
@@ -479,16 +461,8 @@ public class ClinicSystem {
                         String newTreatmentType = new ArrayList<>(TREATMENT_PRICES.keySet()).get(treatmentChoice - 1);
                         double newTreatmentPrice = TREATMENT_PRICES.get(newTreatmentType);
                         
-                        Appointment updatedAppointment = new Appointment(
-                            currentAppointment.getDate(),
-                            currentAppointment.getTime(),
-                            currentAppointment.getPatient(),
-                            currentAppointment.getDoctor(),
-                            newTreatmentType,
-                            newTreatmentPrice
-                        );
-                        appointments.remove(currentAppointment);
-                        appointments.add(updatedAppointment);
+                        appointment.setTreatmentType(newTreatmentType);
+                        appointment.setTreatmentPrice(newTreatmentPrice);
                         System.out.println("\nTreatment updated successfully!");
                         System.out.println("=================================");
                     } else {
