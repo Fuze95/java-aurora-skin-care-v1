@@ -571,59 +571,59 @@ public class ClinicSystem {
         System.out.print("Enter appointment ID: ");
         int appointmentId = scanner.nextInt();
         scanner.nextLine();
-
         Appointment appointment = appointments.stream()
                 .filter(a -> a.getAppointmentId() == appointmentId)
                 .findFirst()
                 .orElse(null);
-
         if (appointment == null) {
             System.out.println("Appointment not found!");
             return;
         }
-
         if (appointment.isCompleted()) {
             System.out.println("Invoice has already been generated for this appointment!");
             return;
         }
 
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        
         // Calculate total
         double treatmentPrice = appointment.getTreatmentPrice();
         double tax = Math.ceil((treatmentPrice + REGISTRATION_FEE) * TAX_RATE * 100) / 100;
         double total = treatmentPrice + REGISTRATION_FEE + tax;
 
-        // Print invoice
-        System.out.println("\n==========================================");
+        // Print invoice with improved formatting
+        System.out.println("\n══════════════════════════════════════════");
         System.out.println("           AURORA SKIN CARE              ");
         System.out.println("              INVOICE                    ");
-        System.out.println("==========================================");
-        System.out.println("Generated Date: " + now.format(dateFormatter));
-        System.out.println("Generated Time: " + now.format(timeFormatter));
-        System.out.println("Appointment Date: " + appointment.getDate());
-        System.out.println("Appointment Time: " + appointment.getTime());
-        System.out.println("Appointment ID: " + appointment.getAppointmentId());
-        System.out.println("------------------------------------------");
-        System.out.println("Patient Details:");
-        System.out.println("Name: " + appointment.getPatient().getName());
-        System.out.println("NIC: " + appointment.getPatient().getNic());
-        System.out.println("------------------------------------------");
-        System.out.println("Doctor: " + appointment.getDoctor().getName());
-        System.out.println("Treatment: " + appointment.getTreatmentType());
-        System.out.println("------------------------------------------");
-        System.out.println("Bill Details:");
-        System.out.printf("Registration Fee:      LKR %.2f%n", REGISTRATION_FEE);
-        System.out.printf("Treatment Price:       LKR %.2f%n", treatmentPrice);
-        System.out.printf("Tax (2.5%%):           LKR %.2f%n", tax);
-        System.out.println("------------------------------------------");
-        System.out.printf("Total Amount:          LKR %.2f%n", total);
-        System.out.println("==========================================");
-        System.out.println("Thank you for choosing Aurora Skin Care!");
-        System.out.println("==========================================");
-
+        System.out.println("══════════════════════════════════════════");
+        System.out.println("Generated Date & Time: " + now.format(dateTimeFormatter));
+        System.out.println("\nAppointment Details:");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.printf("Date: %-12s     Time: %s%n", 
+                appointment.getDate(), appointment.getTime());
+        System.out.printf("Appointment ID: %d%n", appointment.getAppointmentId());
+        System.out.println("\nPATIENT DETAILS:");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.printf("Name: %-30s%n", appointment.getPatient().getName());
+        System.out.printf("NIC:  %-30s%n", appointment.getPatient().getNic());
+        
+        System.out.println("\nTreatment Information:");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.printf("Doctor:    %-27s%n", appointment.getDoctor().getName());
+        System.out.printf("Treatment: %-27s%n", appointment.getTreatmentType());
+        
+        System.out.println("\nBILL DETAILS:");
+        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        System.out.printf("Registration Fee:%31s%.2f%n", "LKR ", REGISTRATION_FEE);
+        System.out.printf("Treatment Price:%32s%.2f%n", "LKR ", treatmentPrice);
+        System.out.printf("Tax (2.5%%):%36s%.2f%n", "LKR ", tax);
+        System.out.println("──────────────────────────────────────────");
+        System.out.printf("Total Amount:%34s%.2f%n", "LKR ", total);
+        System.out.println("══════════════════════════════════════════");
+        System.out.println("     Thank you for choosing Aurora Skin Care!");
+        System.out.println("══════════════════════════════════════════");
+        
         appointment.setCompleted(true);
         System.out.println("\nInvoice generated successfully!");
     }
