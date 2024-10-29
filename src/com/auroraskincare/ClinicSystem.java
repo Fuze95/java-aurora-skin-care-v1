@@ -1,5 +1,8 @@
 package com.auroraskincare;
+
 import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ClinicSystem {
     private List<Doctor> doctors;
@@ -19,6 +22,41 @@ public class ClinicSystem {
         TREATMENT_PRICES.put("Laser Treatment", 12500.00);
     }
 
+    // Add time ranges for each day
+    private static final Map<String, String[]> TIME_RANGES = new HashMap<>();
+    static {
+        TIME_RANGES.put("Monday", new String[]{"10:00", "13:00"});
+        TIME_RANGES.put("Wednesday", new String[]{"14:00", "17:00"});
+        TIME_RANGES.put("Friday", new String[]{"16:00", "20:00"});
+        TIME_RANGES.put("Saturday", new String[]{"09:00", "13:00"});
+    }
+
+    // Helper method to validate time input
+    private boolean isTimeInRange(String day, String time) {
+        try {
+            String[] range = TIME_RANGES.get(day);
+            String[] timeParts = time.split(":");
+            int inputHour = Integer.parseInt(timeParts[0]);
+            int inputMinute = Integer.parseInt(timeParts[1]);
+            
+            String[] startParts = range[0].split(":");
+            String[] endParts = range[1].split(":");
+            
+            int startHour = Integer.parseInt(startParts[0]);
+            int startMinute = Integer.parseInt(startParts[1]);
+            int endHour = Integer.parseInt(endParts[0]);
+            int endMinute = Integer.parseInt(endParts[1]);
+            
+            int inputTime = inputHour * 60 + inputMinute;
+            int startTime = startHour * 60 + startMinute;
+            int endTime = endHour * 60 + endMinute;
+            
+            return inputTime >= startTime && inputTime <= endTime && inputMinute % 15 == 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public ClinicSystem() {
         doctors = new ArrayList<>();
         patients = new ArrayList<>();
@@ -27,6 +65,7 @@ public class ClinicSystem {
         initializeDoctors();
         initializeUsers();
     }
+
 
     private void initializeDoctors() {
         doctors.add(new Doctor(1, "Dr. John Smith", "Dermatologist", "0771234567", "john@clinic.com"));
@@ -70,15 +109,16 @@ public class ClinicSystem {
             System.out.println("4. Search Appointment");
             System.out.println("5. Update Patient Details");
             System.out.println("6. View All Patients");
-            System.out.println("7. Complete Appointment and Generate Invoice");
+            System.out.println("7. Update Appointment");
+            System.out.println("8. Complete Appointment and Generate Invoice");
             if (currentUser.getRole().equals("ADMIN")) {
-                System.out.println("8. Manage Users");
+                System.out.println("9. Manage Users");
             }
-            System.out.println("9. Logout");
+            System.out.println("10. Logout");
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1: registerPatient(); break;
@@ -87,15 +127,16 @@ public class ClinicSystem {
                 case 4: searchAppointment(); break;
                 case 5: updatePatientDetails(); break;
                 case 6: viewAllPatients(); break;
-                case 7: generateInvoice(); break;
-                case 8: 
+                case 7: updateAppointment(); break;
+                case 8: generateInvoice(); break;
+                case 9: 
                     if (currentUser.getRole().equals("ADMIN")) {
                         manageUsers();
                     } else {
                         System.out.println("Invalid choice!");
                     }
                     break;
-                case 9:
+                case 10:
                     System.out.println("Logging out...");
                     return;
                 default:
@@ -151,38 +192,39 @@ public class ClinicSystem {
             return;
         }
 
+        // Select date
         System.out.println("\nAvailable days:");
-        System.out.println("1. Monday (10:00am - 01:00pm)");
-        System.out.println("2. Wednesday (02:00pm - 05:00pm)");
-        System.out.println("3. Friday (04:00pm - 08:00pm)");
-        System.out.println("4. Saturday (09:00am - 01:00pm)");
+        System.out.println("1. Monday (10:00 - 13:00)");
+        System.out.println("2. Wednesday (14:00 - 17:00)");
+        System.out.println("3. Friday (16:00 - 20:00)");
+        System.out.println("4. Saturday (09:00 - 13:00)");
         System.out.print("Select day (1-4): ");
         int dayChoice = scanner.nextInt();
         scanner.nextLine();
 
         String date;
-        String timeSlot;
         switch (dayChoice) {
-            case 1: 
-                date = "Monday";
-                timeSlot = "10:00am - 01:00pm";
-                break;
-            case 2:
-                date = "Wednesday";
-                timeSlot = "02:00pm - 05:00pm";
-                break;
-            case 3:
-                date = "Friday";
-                timeSlot = "04:00pm - 08:00pm";
-                break;
-            case 4:
-                date = "Saturday";
-                timeSlot = "09:00am - 01:00pm";
-                break;
+            case 1: date = "Monday"; break;
+            case 2: date = "Wednesday"; break;
+            case 3: date = "Friday"; break;
+            case 4: date = "Saturday"; break;
             default:
                 System.out.println("Invalid day selection!");
                 return;
         }
+
+        // Get time input from user
+        System.out.println("\nEnter appointment time (HH:mm, must be in 15-minute intervals)");
+        System.out.println("Available time range for " + date + ": " + 
+                          TIME_RANGES.get(date)[0] + " - " + TIME_RANGES.get(date)[1]);
+        System.out.print("Enter time: ");
+        String time = scanner.nextLine();
+
+        if (!isTimeInRange(date, time)) {
+            System.out.println("Invalid time! Time must be within range and in 15-minute intervals.");
+            return;
+        }
+
 
         System.out.println("\nAvailable doctors:");
         for (Doctor doctor : doctors) {
@@ -291,6 +333,138 @@ public class ClinicSystem {
         }
     }
 
+    private void updateAppointment() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\n=== Update Appointment ===");
+        
+        System.out.print("Enter appointment ID: ");
+        int appointmentId = scanner.nextInt();
+        scanner.nextLine();
+
+        Appointment appointment = appointments.stream()
+                .filter(a -> a.getAppointmentId() == appointmentId)
+                .findFirst()
+                .orElse(null);
+
+        if (appointment == null) {
+            System.out.println("Appointment not found!");
+            return;
+        }
+
+        if (appointment.isCompleted()) {
+            System.out.println("Cannot update completed appointment!");
+            return;
+        }
+
+        System.out.println("\nCurrent Appointment Details:");
+        System.out.println("1. Doctor: " + appointment.getDoctor().getName());
+        System.out.println("2. Day: " + appointment.getDate());
+        System.out.println("3. Time: " + appointment.getTime());
+        System.out.println("4. Back to Main Menu");
+        System.out.print("Select what to update (1-4): ");
+        
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (choice) {
+            case 1:
+                // Update doctor
+                System.out.println("\nAvailable doctors:");
+                for (Doctor doctor : doctors) {
+                    System.out.println(doctor.getId() + ". " + doctor.getName());
+                }
+                System.out.print("Select new doctor (1-2): ");
+                int doctorId = scanner.nextInt();
+                scanner.nextLine();
+
+                Doctor newDoctor = doctors.stream()
+                        .filter(d -> d.getId() == doctorId)
+                        .findFirst()
+                        .orElse(null);
+
+                if (newDoctor != null) {
+                    appointment = new Appointment(
+                        appointment.getDate(),
+                        appointment.getTime(),
+                        appointment.getPatient(),
+                        newDoctor,
+                        appointment.getTreatmentType(),
+                        appointment.getTreatmentPrice()
+                    );
+                    System.out.println("Doctor updated successfully!");
+                } else {
+                    System.out.println("Invalid doctor selection!");
+                }
+                break;
+
+            case 2:
+                // Update day
+                System.out.println("\nAvailable days:");
+                System.out.println("1. Monday (10:00 - 13:00)");
+                System.out.println("2. Wednesday (14:00 - 17:00)");
+                System.out.println("3. Friday (16:00 - 20:00)");
+                System.out.println("4. Saturday (09:00 - 13:00)");
+                System.out.print("Select new day (1-4): ");
+                int dayChoice = scanner.nextInt();
+                scanner.nextLine();
+
+                String newDate;
+                switch (dayChoice) {
+                    case 1: newDate = "Monday"; break;
+                    case 2: newDate = "Wednesday"; break;
+                    case 3: newDate = "Friday"; break;
+                    case 4: newDate = "Saturday"; break;
+                    default:
+                        System.out.println("Invalid day selection!");
+                        return;
+                }
+
+                appointment = new Appointment(
+                    newDate,
+                    appointment.getTime(),
+                    appointment.getPatient(),
+                    appointment.getDoctor(),
+                    appointment.getTreatmentType(),
+                    appointment.getTreatmentPrice()
+                );
+                System.out.println("Day updated successfully!");
+                break;
+
+            case 3:
+                // Update time
+                System.out.println("\nEnter new appointment time (HH:mm, must be in 15-minute intervals)");
+                System.out.println("Available time range for " + appointment.getDate() + ": " + 
+                                  TIME_RANGES.get(appointment.getDate())[0] + " - " + 
+                                  TIME_RANGES.get(appointment.getDate())[1]);
+                System.out.print("Enter new time: ");
+                String newTime = scanner.nextLine();
+
+                if (isTimeInRange(appointment.getDate(), newTime)) {
+                    appointment = new Appointment(
+                        appointment.getDate(),
+                        newTime,
+                        appointment.getPatient(),
+                        appointment.getDoctor(),
+                        appointment.getTreatmentType(),
+                        appointment.getTreatmentPrice()
+                    );
+                    System.out.println("Time updated successfully!");
+                } else {
+                    System.out.println("Invalid time! Time must be within range and in 15-minute intervals.");
+                }
+                break;
+
+            case 4:
+                return;
+
+            default:
+                System.out.println("Invalid choice!");
+                break;
+        }
+    }
+
+
+
     private void updatePatientDetails() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n=== Update Patient Details ===");
@@ -375,6 +549,10 @@ public class ClinicSystem {
             return;
         }
 
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
         // Calculate total
         double treatmentPrice = appointment.getTreatmentPrice();
         double tax = Math.ceil((treatmentPrice + REGISTRATION_FEE) * TAX_RATE * 100) / 100;
@@ -385,7 +563,10 @@ public class ClinicSystem {
         System.out.println("           AURORA SKIN CARE              ");
         System.out.println("              INVOICE                    ");
         System.out.println("==========================================");
-        System.out.println("Invoice Date: " + appointment.getDate());
+        System.out.println("Generated Date: " + now.format(dateFormatter));
+        System.out.println("Generated Time: " + now.format(timeFormatter));
+        System.out.println("Appointment Date: " + appointment.getDate());
+        System.out.println("Appointment Time: " + appointment.getTime());
         System.out.println("Appointment ID: " + appointment.getAppointmentId());
         System.out.println("------------------------------------------");
         System.out.println("Patient Details:");
