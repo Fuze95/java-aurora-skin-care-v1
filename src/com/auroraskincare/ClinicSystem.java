@@ -292,50 +292,66 @@ public class ClinicSystem {
     }
 
     private void searchAppointment() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("\n=== Search Appointment ===");
-        System.out.println("1. Search by Patient Name");
-        System.out.println("2. Search by Appointment ID");
-        System.out.print("Enter choice: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+    Scanner scanner = new Scanner(System.in);
+    boolean validInput = false;
 
-        List<Appointment> foundAppointments = new ArrayList<>();
-        
-        switch (choice) {
-            case 1:
-                System.out.print("Enter patient name: ");
-                String name = scanner.nextLine();
-                foundAppointments = appointments.stream()
-                    .filter(a -> a.getPatient().getName().toLowerCase().contains(name.toLowerCase()))
-                    .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-                break;
-            case 2:
-                System.out.print("Enter appointment ID: ");
-                int id = scanner.nextInt();
-                appointments.stream()
-                    .filter(a -> a.getAppointmentId() == id)
-                    .findFirst()
-                    .ifPresent(foundAppointments::add);
-                break;
-            default:
-                System.out.println("Invalid choice!");
-                return;
-        }
+    while (!validInput) {
+        try {
+            System.out.println("\n=== Search Appointment ===");
+            System.out.println("1. Search by Patient Name");
+            System.out.println("2. Search by Appointment ID");
+            System.out.print("Enter choice: ");
+            
+            if (scanner.hasNextInt()) {
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Clear the buffer
+                List<Appointment> foundAppointments = new ArrayList<>();
 
-        if (foundAppointments.isEmpty()) {
-            System.out.println("No appointments found.");
-            return;
-        }
+                switch (choice) {
+                    case 1:
+                        System.out.print("Enter patient name: ");
+                        String name = scanner.nextLine();
+                        foundAppointments = appointments.stream()
+                            .filter(a -> a.getPatient().getName().toLowerCase().contains(name.toLowerCase()))
+                            .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+                        validInput = true;
+                        break;
+                    case 2:
+                        System.out.print("Enter appointment ID: ");
+                        int id = scanner.nextInt();
+                        appointments.stream()
+                            .filter(a -> a.getAppointmentId() == id)
+                            .findFirst()
+                            .ifPresent(foundAppointments::add);
+                        validInput = true;
+                        break;
+                    default:
+                        System.out.println("Invalid choice! Please enter 1 or 2.");
+                        continue;
+                }
 
-        for (Appointment apt : foundAppointments) {
-            System.out.println("\nAppointment ID: " + apt.getAppointmentId());
-            System.out.println("Patient: " + apt.getPatient().getName());
-            System.out.println("Doctor: " + apt.getDoctor().getName());
-            System.out.println("Date: " + apt.getDate());
-            System.out.println("Time: " + apt.getTime());
+                if (foundAppointments.isEmpty()) {
+                    System.out.println("No appointments found.");
+                    return;
+                }
+
+                for (Appointment apt : foundAppointments) {
+                    System.out.println("\nAppointment ID: " + apt.getAppointmentId());
+                    System.out.println("Patient: " + apt.getPatient().getName());
+                    System.out.println("Doctor: " + apt.getDoctor().getName());
+                    System.out.println("Date: " + apt.getDate());
+                    System.out.println("Time: " + apt.getTime());
+                }
+            } else {
+                System.out.println("Invalid input! Please enter a number (1 or 2).");
+                scanner.nextLine();
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input! Please enter a number (1 or 2).");
+            scanner.nextLine();
         }
     }
+}
 
     private void updateAppointment() {
         Scanner scanner = new Scanner(System.in);
