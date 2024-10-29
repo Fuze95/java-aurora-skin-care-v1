@@ -183,7 +183,7 @@ public class ClinicSystem {
         }
 
         // Select patient
-        System.out.println("Select patient by NIC:");
+        System.out.print("Select patient by NIC:");
         String nic = scanner.nextLine();
         Patient patient = patients.stream()
                 .filter(p -> p.getNic().equals(nic))
