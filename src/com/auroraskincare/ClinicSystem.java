@@ -261,10 +261,10 @@ public class ClinicSystem {
 
         // Collect registration fee
         System.out.printf("\nRegistration fee: LKR %.2f%n", REGISTRATION_FEE);
-        System.out.print("Confirm payment (yes/no): ");
+        System.out.print("Confirm payment (y/n): ");
         String confirm = scanner.nextLine();
 
-        if (confirm.equalsIgnoreCase("yes")) {
+        if (confirm.equalsIgnoreCase("y")) {
             Appointment appointment = new Appointment(date, time, patient, selectedDoctor, treatmentType, treatmentPrice);
             appointments.add(appointment);
             System.out.println("Appointment booked successfully! Appointment ID: " + appointment.getAppointmentId());
