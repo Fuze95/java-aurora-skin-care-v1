@@ -70,7 +70,7 @@ public class InvoiceGenerator {
         System.out.println("\nAPPOINTMENT DETAILS:");
         printSeparator();
         System.out.printf("Date: %-12s     Time: %s%n", 
-                appointment.getDate(), appointment.getTime());
+                appointment.getDay(), appointment.getTime());
         System.out.printf("Appointment ID: %d%n", appointment.getAppointmentId());
         
         // Print patient details
