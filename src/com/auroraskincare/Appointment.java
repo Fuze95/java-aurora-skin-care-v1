@@ -3,7 +3,7 @@ package com.auroraskincare;
 public class Appointment {
     private static int counter = 1000;
     private int appointmentId;
-    private String date;
+    private String day;
     private String time;
     private Patient patient;
     private Doctor doctor;
@@ -11,9 +11,15 @@ public class Appointment {
     private double treatmentPrice;
     private boolean isCompleted;
 
-    public Appointment(String date, String time, Patient patient, Doctor doctor, String treatmentType, double treatmentPrice) {
+    // Constructor to use day instead of date
+    public Appointment(String day, String time, Patient patient, Doctor doctor, String treatmentType, double treatmentPrice) {
         this.appointmentId = ++counter;
-        this.date = date;
+        // Validate and set day
+        if (isValidDay(day)) {
+            this.day = day;
+        } else {
+            throw new IllegalArgumentException("Invalid day. Must be Monday, Wednesday, Friday, or Saturday.");
+        }
         this.time = time;
         this.patient = patient;
         this.doctor = doctor;
@@ -22,16 +28,30 @@ public class Appointment {
         this.isCompleted = false;
     }
 
-    // Add setters for updatable fields
-    public void setDate(String date) { this.date = date; }
+    // Validation method for days
+    private boolean isValidDay(String day) {
+        return day.equalsIgnoreCase("Monday") || 
+               day.equalsIgnoreCase("Wednesday") || 
+               day.equalsIgnoreCase("Friday") || 
+               day.equalsIgnoreCase("Saturday");
+    }
+    
+    // Setters
+    public void setDay(String day) {
+        if (isValidDay(day)) {
+            this.day = day;
+        } else {
+            throw new IllegalArgumentException("Invalid day. Must be Monday, Wednesday, Friday, or Saturday.");
+        }
+    }
     public void setTime(String time) { this.time = time; }
     public void setDoctor(Doctor doctor) { this.doctor = doctor; }
     public void setTreatmentType(String treatmentType) { this.treatmentType = treatmentType; }
     public void setTreatmentPrice(double treatmentPrice) { this.treatmentPrice = treatmentPrice; }
 
-    // Existing getters
+    //Getters
     public int getAppointmentId() { return appointmentId; }
-    public String getDate() { return date; }
+    public String getDay() { return day; }
     public String getTime() { return time; }
     public Patient getPatient() { return patient; }
     public Doctor getDoctor() { return doctor; }
