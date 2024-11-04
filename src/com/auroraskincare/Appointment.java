@@ -49,7 +49,7 @@ public class Appointment {
     public void setTreatmentType(String treatmentType) { this.treatmentType = treatmentType; }
     public void setTreatmentPrice(double treatmentPrice) { this.treatmentPrice = treatmentPrice; }
 
-    //Getters
+    // Getters
     public int getAppointmentId() { return appointmentId; }
     public String getDay() { return day; }
     public String getTime() { return time; }
