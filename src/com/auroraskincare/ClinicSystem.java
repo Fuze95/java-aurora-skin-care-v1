@@ -106,9 +106,9 @@ public class ClinicSystem {
             System.out.println("2. Make Appointment");
             System.out.println("3. View All Appointments");
             System.out.println("4. Search Appointment");
-            System.out.println("5. Update Patient Details");
+            System.out.println("5. Update Appointment");
             System.out.println("6. View All Patients");
-            System.out.println("7. Update Appointment");
+            System.out.println("7. Update Patient Details");
             System.out.println("8. Complete Appointment and Generate Invoice");
             System.out.println("9. View Doctors");
             if (currentUser.getRole().equals("ADMIN")) {
@@ -125,9 +125,9 @@ public class ClinicSystem {
                 case 2: makeAppointment(); break;
                 case 3: viewAllAppointments(); break;
                 case 4: searchAppointment(); break;
-                case 5: updatePatientDetails(); break;
+                case 5: updateAppointment(); break;
                 case 6: viewAllPatients(); break;
-                case 7: updateAppointment(); break;
+                case 7: updatePatientDetails(); break;
                 case 8: generateInvoice(); break;
                 case 9: viewDoctors(); break;
                 case 10: 
@@ -281,7 +281,7 @@ private void viewAllAppointments() {
         System.out.println("\n=== Appointment Viewing Options ===");
         System.out.println("1. View All Appointments");
         System.out.println("2. View Appointments by Day");
-        System.out.println("3. Go Back to Main Menu");
+        System.out.println("3. Return to Main Menu");
         System.out.print("Enter your choice (1-3): ");
 
         int choice = scanner.nextInt();
@@ -392,7 +392,7 @@ private void viewAppointmentsByDay() {
             System.out.println("\n=== Search Appointment ===");
             System.out.println("1. Search by Patient Name");
             System.out.println("2. Search by Appointment ID");
-            System.out.println("3. Back to Main Menu");
+            System.out.println("3. Return to Main Menu");
             System.out.print("Enter choice: ");
             
             if (scanner.hasNextInt()) {
@@ -711,7 +711,7 @@ private void viewAppointmentsByDay() {
         System.out.println("\n=== Manage Users ===");
         System.out.println("1. View All Users");
         System.out.println("2. Add New User");
-        System.out.println("3. Back to Main Menu");
+        System.out.println("3. Return to Main Menu");
         System.out.print("Enter choice: ");
         
         int choice = scanner.nextInt();
