@@ -10,8 +10,6 @@ public class ClinicSystem {
     private List<Appointment> appointments;
     private List<User> users;
     private User currentUser;
-    
-    private static final double REGISTRATION_FEE = 500.00;
     private static final Map<String, Double> TREATMENT_PRICES = new HashMap<>();
     
     static {
@@ -20,6 +18,7 @@ public class ClinicSystem {
         TREATMENT_PRICES.put("Mole Removal", 3850.00);
         TREATMENT_PRICES.put("Laser Treatment", 12500.00);
     }
+    double REGISTRATION_FEE = InvoiceGenerator.getRegistrationFee();
 
     // Add time ranges for each day
     private static final Map<String, String[]> TIME_RANGES = new HashMap<>();
