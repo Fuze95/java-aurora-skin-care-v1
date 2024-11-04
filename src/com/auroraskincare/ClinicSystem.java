@@ -273,40 +273,132 @@ public class ClinicSystem {
         }
     }
 
-    private void viewAllAppointments() {
-        System.out.println("\n=== All Appointments ===");
-        if (appointments.isEmpty()) {
-            System.out.println("No appointments found.");
-            return;
-        }
+private void viewAllAppointments() {
+    Scanner scanner = new Scanner(System.in);
+    boolean running = true;
 
-        for (Appointment apt : appointments) {
-            System.out.println("\nAppointment ID: " + apt.getAppointmentId());
-            System.out.println("Patient: " + apt.getPatient().getName());
-            System.out.println("Doctor: " + apt.getDoctor().getName());
-            System.out.println("Date: " + apt.getDate());
-            System.out.println("Time: " + apt.getTime());
-            System.out.println("Treatment: " + apt.getTreatmentType());
-            System.out.println("Status: " + (apt.isCompleted() ? "Completed" : "Pending"));
+    while (running) {
+        System.out.println("\n=== Appointment Viewing Options ===");
+        System.out.println("1. View All Appointments");
+        System.out.println("2. View Appointments by Day");
+        System.out.println("3. Go Back to Main Menu");
+        System.out.print("Enter your choice (1-3): ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Clear buffer
+
+        switch (choice) {
+            case 1:
+                displayAllAppointments();
+                break;
+            case 2:
+                viewAppointmentsByDay();
+                break;
+            case 3:
+                running = false;
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
         }
     }
+}
+
+private void displayAllAppointments() {
+    System.out.println("\n=== All Appointments ===");
+    if (appointments.isEmpty()) {
+        System.out.println("No appointments found.");
+        return;
+    }
+    String format = "%-4s | %-15s | %-20s | %-10s | %-6s | %-15s | %-10s%n";
+    System.out.printf(format, 
+        "ID", "Patient", "Doctor", "Day", "Time", "Treatment", "Status");
+    System.out.println("-".repeat(99));
+    for (Appointment apt : appointments) {
+        System.out.printf(format,
+            apt.getAppointmentId(),
+            apt.getPatient().getName(),
+            apt.getDoctor().getName(),
+            apt.getDay(),
+            apt.getTime(),
+            apt.getTreatmentType(),
+            (apt.isCompleted() ? "Completed" : "Pending")
+        );
+    }
+}
+
+private void viewAppointmentsByDay() {
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("\n=== View Appointments by Day ===");
+    System.out.println("1. Monday");
+    System.out.println("2. Wednesday");
+    System.out.println("3. Friday");
+    System.out.println("4. Saturday");
+    System.out.print("Select a day (1-4): ");
+
+    int dayChoice = scanner.nextInt();
+    String selectedDay;
+
+    switch (dayChoice) {
+        case 1:
+            selectedDay = "Monday";
+            break;
+        case 2:
+            selectedDay = "Wednesday";
+            break;
+        case 3:
+            selectedDay = "Friday";
+            break;
+        case 4:
+            selectedDay = "Saturday";
+            break;
+        default:
+            System.out.println("Invalid day selection.");
+            return;
+    }
+
+    System.out.println("\n=== Appointments for " + selectedDay + " ===");
+    boolean found = false;
+    
+    String format = "%-4s | %-15s | %-20s | %-10s | %-6s | %-15s | %-10s%n";
+    System.out.printf(format, 
+        "ID", "Patient", "Doctor", "Day", "Time", "Treatment", "Status");
+    System.out.println("-".repeat(99));
+
+    for (Appointment apt : appointments) {
+        if (apt.getDay().equalsIgnoreCase(selectedDay)) {
+            System.out.printf(format,
+                apt.getAppointmentId(),
+                apt.getPatient().getName(),
+                apt.getDoctor().getName(),
+                apt.getDay(),
+                apt.getTime(),
+                apt.getTreatmentType(),
+                (apt.isCompleted() ? "Completed" : "Pending")
+            );
+            found = true;
+        }
+    }
+
+    if (!found) {
+        System.out.println("No appointments found for " + selectedDay);
+    }
+}
 
     private void searchAppointment() {
     Scanner scanner = new Scanner(System.in);
     boolean validInput = false;
-
     while (!validInput) {
         try {
             System.out.println("\n=== Search Appointment ===");
             System.out.println("1. Search by Patient Name");
             System.out.println("2. Search by Appointment ID");
+            System.out.println("3. Back to Main Menu");
             System.out.print("Enter choice: ");
             
             if (scanner.hasNextInt()) {
                 int choice = scanner.nextInt();
                 scanner.nextLine(); // Clear the buffer
                 List<Appointment> foundAppointments = new ArrayList<>();
-
                 switch (choice) {
                     case 1:
                         System.out.print("Enter patient name: ");
@@ -325,29 +417,29 @@ public class ClinicSystem {
                             .ifPresent(foundAppointments::add);
                         validInput = true;
                         break;
+                    case 3:
+                        return;
                     default:
-                        System.out.println("Invalid choice! Please enter 1 or 2.");
+                        System.out.println("Invalid choice! Please enter 1, 2, or 3.");
                         continue;
                 }
-
                 if (foundAppointments.isEmpty()) {
                     System.out.println("No appointments found.");
                     return;
                 }
-
                 for (Appointment apt : foundAppointments) {
                     System.out.println("\nAppointment ID: " + apt.getAppointmentId());
                     System.out.println("Patient: " + apt.getPatient().getName());
                     System.out.println("Doctor: " + apt.getDoctor().getName());
-                    System.out.println("Date: " + apt.getDate());
+                    System.out.println("Date: " + apt.getDay());
                     System.out.println("Time: " + apt.getTime());
                 }
             } else {
-                System.out.println("Invalid input! Please enter a number (1 or 2).");
+                System.out.println("Invalid input! Please enter a number (1, 2, or 3).");
                 scanner.nextLine();
             }
         } catch (InputMismatchException e) {
-            System.out.println("Invalid input! Please enter a number (1 or 2).");
+            System.out.println("Invalid input! Please enter a number (1, 2, or 3).");
             scanner.nextLine();
         }
     }
@@ -381,7 +473,7 @@ public class ClinicSystem {
             // Show current appointment details
             System.out.println("\nCurrent Appointment Details:");
             System.out.println("Doctor: " + appointment.getDoctor().getName());
-            System.out.println("Day: " + appointment.getDate());
+            System.out.println("Day: " + appointment.getDay());
             System.out.println("Time: " + appointment.getTime());
             System.out.println("Treatment: " + appointment.getTreatmentType() + 
                              " (LKR " + appointment.getTreatmentPrice() + ")");
@@ -433,12 +525,12 @@ public class ClinicSystem {
                     int dayChoice = scanner.nextInt();
                     scanner.nextLine();
 
-                    String newDate;
+                    String newDay;
                     switch (dayChoice) {
-                        case 1: newDate = "Monday"; break;
-                        case 2: newDate = "Wednesday"; break;
-                        case 3: newDate = "Friday"; break;
-                        case 4: newDate = "Saturday"; break;
+                        case 1: newDay = "Monday"; break;
+                        case 2: newDay = "Wednesday"; break;
+                        case 3: newDay = "Friday"; break;
+                        case 4: newDay = "Saturday"; break;
                         default:
                             System.out.println("\nInvalid day selection!");
                             System.out.println("=================================");
@@ -446,14 +538,14 @@ public class ClinicSystem {
                     }
 
                     System.out.println("\nEnter new appointment time (HH:mm, must be in 15-minute intervals)");
-                    System.out.println("Available time range for " + newDate + ": " + 
-                                      TIME_RANGES.get(newDate)[0] + " - " + 
-                                      TIME_RANGES.get(newDate)[1]);
+                    System.out.println("Available time range for " + newDay + ": " + 
+                                      TIME_RANGES.get(newDay)[0] + " - " + 
+                                      TIME_RANGES.get(newDay)[1]);
                     System.out.print("Enter new time: ");
                     String newTime = scanner.nextLine();
 
-                    if (isTimeInRange(newDate, newTime)) {
-                        appointment.setDate(newDate);
+                    if (isTimeInRange(newDay, newTime)) {
+                        appointment.setDay(newDay);
                         appointment.setTime(newTime);
                         System.out.println("\nSchedule updated successfully!");
                         System.out.println("=================================");
@@ -551,19 +643,16 @@ public class ClinicSystem {
     }
 
     private void viewAllPatients() {
-        System.out.println("\n=== All Patients ===");
-        if (patients.isEmpty()) {
-            System.out.println("No patients registered.");
-            return;
-        }
-
-        for (Patient patient : patients) {
-            System.out.println("\nNIC: " + patient.getNic());
-            System.out.println("Name: " + patient.getName());
-            System.out.println("Email: " + patient.getEmail());
-            System.out.println("Phone: " + patient.getPhoneNumber());
-        }
+    System.out.println("\n=== All Patients ===");
+    if (patients.isEmpty()) {
+        System.out.println("No patients registered.");
+        return;
     }
+    for (Patient patient : patients) {
+        System.out.println("NIC: " + patient.getNic() + " | Name: " + patient.getName() + 
+                         " | Email: " + patient.getEmail() + " | Phone: " + patient.getPhoneNumber());
+    }
+}
 
     private void viewDoctors() {
         System.out.println("\n=== Doctor Information ===");
