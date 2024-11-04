@@ -8,6 +8,10 @@ public class InvoiceGenerator {
     private static final String BORDER_CHAR = "#";
     private static final String SEPARATOR_CHAR = "-";
     private static final double REGISTRATION_FEE = 500.00;
+
+public static double getRegistrationFee() {
+    return REGISTRATION_FEE;
+}
     private static final double TAX_RATE = 0.025; // 2.5%
 
     private final Appointment appointment;
