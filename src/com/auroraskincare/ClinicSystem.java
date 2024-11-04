@@ -50,7 +50,7 @@ public class ClinicSystem {
             int startTime = startHour * 60 + startMinute;
             int endTime = endHour * 60 + endMinute;
             
-            return inputTime >= startTime && inputTime <= endTime && inputMinute % 15 == 0;
+            return inputTime >= startTime && inputTime <= endTime && inputMinute % 15 == 0; //15-minute Session Per Patient
         } catch (Exception e) {
             return false;
         }
