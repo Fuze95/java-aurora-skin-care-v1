@@ -11,15 +11,10 @@ public class Appointment {
     private double treatmentPrice;
     private boolean isCompleted;
 
-    // Constructor to use day instead of date
+    // Constructor
     public Appointment(String day, String time, Patient patient, Doctor doctor, String treatmentType, double treatmentPrice) {
         this.appointmentId = ++counter;
-        // Validate and set day
-        if (isValidDay(day)) {
-            this.day = day;
-        } else {
-            throw new IllegalArgumentException("Invalid day. Must be Monday, Wednesday, Friday, or Saturday.");
-        }
+        this.day = day;
         this.time = time;
         this.patient = patient;
         this.doctor = doctor;
@@ -27,23 +22,9 @@ public class Appointment {
         this.treatmentPrice = treatmentPrice;
         this.isCompleted = false;
     }
-
-    // Validation method for days
-    private boolean isValidDay(String day) {
-        return day.equalsIgnoreCase("Monday") || 
-               day.equalsIgnoreCase("Wednesday") || 
-               day.equalsIgnoreCase("Friday") || 
-               day.equalsIgnoreCase("Saturday");
-    }
     
     // Setters
-    public void setDay(String day) {
-        if (isValidDay(day)) {
-            this.day = day;
-        } else {
-            throw new IllegalArgumentException("Invalid day. Must be Monday, Wednesday, Friday, or Saturday.");
-        }
-    }
+    public void setDay(String day) { this.day = day; }
     public void setTime(String time) { this.time = time; }
     public void setDoctor(Doctor doctor) { this.doctor = doctor; }
     public void setTreatmentType(String treatmentType) { this.treatmentType = treatmentType; }
