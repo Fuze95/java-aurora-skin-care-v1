@@ -610,8 +610,6 @@ public class ClinicSystem {
         }
     }
 
-
-
     private void updatePatientDetails() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n=== Update Patient Details ===");
