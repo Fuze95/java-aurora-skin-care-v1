@@ -1,6 +1,13 @@
 package com.auroraskincare;
 
+/*
+* Represents an appointment in the clinic system.
+* Manages all appointment-related information including scheduling,
+* patient-doctor assignments, treatment details, and completion status.
+*/
+
 public class Appointment {
+    // Counter for generating unique appointment IDs, starting from 1000
     private static int counter = 1000;
     private int appointmentId;
     private String day;
@@ -9,6 +16,10 @@ public class Appointment {
     private Doctor doctor;
     private String treatmentType;
     private double treatmentPrice;
+    /* 
+    * Flag indicating if the appointment has been completed
+    * Appointment status shows 'pending' until an Invoice is issued 
+    */
     private boolean isCompleted;
 
     // Constructor

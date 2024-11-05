@@ -3,16 +3,21 @@ package com.auroraskincare;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/*
+* Handles the generation and formatting of invoices for appointments.
+* Calculates fees, taxes, and creates a formatted invoice display.
+*/
+
 public class InvoiceGenerator {
-    private static final int INVOICE_WIDTH = 50;
+    private static final int INVOICE_WIDTH = 50; // Width of the invoice in characters
     private static final String BORDER_CHAR = "#";
     private static final String SEPARATOR_CHAR = "-";
-    private static final double REGISTRATION_FEE = 500.00;
+    private static final double REGISTRATION_FEE = 500.00; //Standard registration fee
 
 public static double getRegistrationFee() {
     return REGISTRATION_FEE;
 }
-    private static final double TAX_RATE = 0.025; // 2.5%
+    private static final double TAX_RATE = 0.025; // 2.5% Tax
 
     private final Appointment appointment;
 
@@ -55,7 +60,7 @@ public static double getRegistrationFee() {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         
-        // Calculate total
+        // Calculate total, rounded up to the nearest decimal number
         double treatmentPrice = appointment.getTreatmentPrice();
         double tax = Math.ceil((treatmentPrice + REGISTRATION_FEE) * TAX_RATE * 100) / 100;
         double total = treatmentPrice + REGISTRATION_FEE + tax;
