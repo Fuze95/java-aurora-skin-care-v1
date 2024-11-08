@@ -129,7 +129,7 @@ public class ClinicSystem {
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine();// Consume newline character
+            scanner.nextLine();
 
             switch (choice) {
                 case 1: registerPatient(); break;
