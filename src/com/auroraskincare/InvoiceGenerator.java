@@ -68,7 +68,7 @@ public static double getRegistrationFee() {
         // Print invoice header
         System.out.println();
         printBorder();
-        printCenteredLine("AURORA SKIN CARE");
+        printCenteredLine("AURORA SKIN CARE - COLOMBO");
         printCenteredLine("INVOICE");
         printBorder();
 
